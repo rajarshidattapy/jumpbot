@@ -1,0 +1,10 @@
+{
+  "name": "JumpBot",
+  "version": "0.1.0",
+  "entrypoint": "python3 agent.py",
+  "description": "MCP tools for reading and querying technical documentation",
+  "tools": [
+    { "name": "crawl_page" },
+    { "name": "query_page_tool" }
+  ]
+}

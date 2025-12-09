@@ -1,0 +1,8 @@
+body { margin: 0; font-family: sans-serif; }
+#container { display: flex; height: 100vh; }
+#iframe, #docs-frame { flex: 1; border: none; }
+#sidebar { width: 380px; background:#111; color:#eee; display:flex; flex-direction:column; }
+#url-input, #question-input { margin: 12px; padding: 10px; }
+#load-btn, #ask-btn { margin: 0 12px 12px; padding: 10px; cursor: pointer; }
+#chat-window { flex: 1; overflow-y: auto; margin: 12px; }
+.highlight { background: yellow; transition: background 1s; }
