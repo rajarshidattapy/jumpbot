@@ -44,8 +44,17 @@ def crawl_site(root_url: str, max_pages: int = 40):
             links = get_links(page)
             for link in links:
                 full = urljoin(url, link)
+
+                # ---- ignore websocket + local addresses ----
+                if full.startswith("ws://") or full.startswith("wss://"):
+                    continue
+                if "localhost" in full or "127.0.0.1" in full:
+                    continue
+
+                # ---- queue only valid same-domain pages ----
                 if same_domain(root_url, full) and full not in visited and full not in queue:
                     queue.append(full)
 
         browser.close()
+
     return results

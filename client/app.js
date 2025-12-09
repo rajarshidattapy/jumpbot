@@ -36,11 +36,7 @@ document.getElementById("ask-btn").onclick = async () => {
   appendMsg(`You: ${q}`);
 
   try {
-    const res = await mcp("query_page_tool", {
-      url: currentURL,
-      question: q
-    });
-
+    const res = await mcp("query_page_tool", { url: currentURL, question: q });
     appendMsg(`JumpBot: ${res.answer}`);
     highlightSelector(res.selector);
   } catch (err) {
@@ -70,10 +66,12 @@ function highlightSelector(selector) {
     setTimeout(() => el.classList.remove("highlight"), 3000);
   }
 
-  // Wait if new page still loading
   if (docsFrame.contentDocument?.readyState !== "complete") {
     docsFrame.onload = () => setTimeout(run, 350);
   } else {
     run();
   }
 }
+
+// ---- connect HTML to MCP ----
+window.mcp = { call: mcp };
