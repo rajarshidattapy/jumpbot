@@ -1,60 +1,102 @@
-from urllib.parse import urljoin, urlparse
-from playwright.sync_api import sync_playwright
-import trafilatura
+import os
+import sys
+import asyncio
+# Force stdout/stderr to print immediately
+sys.stderr.reconfigure(encoding='utf-8')
 
-def get_links(page):
-    return page.eval_on_selector_all("a[href]", "els => els.map(e => e.getAttribute('href'))")
+def log(msg):
+    sys.stderr.write(f"\n🔴 [DEBUG] {msg}\n")
+    sys.stderr.flush()
 
-def same_domain(base, link):
+# --- HARDCODED PATH CHECK ---
+# Based on your screenshot path
+BASE_DIR = r"C:\Users\PRERAN S\OneDrive\Desktop\opensource\jumpbot\client"
+if not os.path.exists(BASE_DIR):
+    # Fallback to relative if hardcoded path fails
+    BASE_DIR = os.path.join(os.getcwd(), "client")
+
+log(f"SAVING FILES TO: {BASE_DIR}")
+
+async def crawl_site(start_url, max_pages=1):
+    log(f"STARTING CRAWL: {start_url}")
+    
+    mirror_path = os.path.join(BASE_DIR, "mirror.html")
+    
+    # 1. WRITE LOADING PLACEHOLDER
     try:
-        return urlparse(base).netloc == urlparse(link).netloc
-    except:
-        return False
+        loading_html = f"""
+        <html><body style='background:#222;color:#0f0;font-family:monospace;padding:20px'>
+        <h2>🕷️ JumpBot is crawling...</h2>
+        <p>Target: {start_url}</p>
+        </body></html>
+        """
+        with open(mirror_path, "w", encoding="utf-8") as f:
+            f.write(loading_html)
+    except Exception as e:
+        log(f"❌ FAILED TO WRITE FILE: {e}")
 
-def extract_text(html):
-    return trafilatura.extract(html, include_links=False)
+    # 2. RUN PLAYWRIGHT
+    from playwright.async_api import async_playwright
+    from bs4 import BeautifulSoup # Import here to be safe
+    
+    all_blocks = []
 
-def crawl_site(root_url: str, max_pages: int = 40):
-    visited = set()
-    queue = [root_url]
-    results = []
-
-    with sync_playwright() as p:
-        browser = p.firefox.launch()
-        page = browser.new_page()
-
-        while queue and len(visited) < max_pages:
-            url = queue.pop(0)
-            if url in visited:
-                continue
-            visited.add(url)
-
+    try:
+        log("Launching Browser...")
+        async with async_playwright() as p:
+            browser = await p.firefox.launch(headless=True)
+            page = await browser.new_page()
+            
+            log(f"Navigating to {start_url}...")
             try:
-                page.goto(url, timeout=60000)
-                html = page.content()
-            except:
-                continue
+                await page.goto(start_url, timeout=60000, wait_until="domcontentloaded")
+                html = await page.content()
+                
+                # --- CSS RESCUE START ---
+                soup = BeautifulSoup(html, "html.parser")
+                
+                # A. Inject Base Tag (Correctly)
+                if soup.head:
+                    # Remove old base tags if any
+                    for b in soup.head.find_all("base"):
+                        b.decompose()
+                    
+                    # Create new base tag
+                    new_base = soup.new_tag("base", href=start_url)
+                    soup.head.insert(0, new_base)
+                
+                # B. Force HTTPS on all links (Fixes the "No CSS" bug)
+                html_str = str(soup)
+                html_str = html_str.replace('src="//', 'src="https://')
+                html_str = html_str.replace('href="//', 'href="https://')
+                html_str = html_str.replace('content="//', 'content="https://')
+                # ------------------------
 
-            text = extract_text(html)
-            if text:
-                paras = [p.strip() for p in text.split("\n") if p.strip()]
-                selectors = [f"{url}::jumpbot-section-{i}" for i in range(len(paras))]
-                results += list(zip(paras, selectors))
+                # Overwrite the test file with real content
+                with open(mirror_path, "w", encoding="utf-8") as f:
+                    f.write(html_str)
+                log(f"✅ REAL CONTENT SAVED ({len(html_str)} bytes)")
+                
+                # Extract text for the agent
+                # We re-parse the *modified* html to be consistent
+                clean_soup = BeautifulSoup(html_str, 'html.parser')
+                
+                # Remove junk for the AI (scripts, styles)
+                for script in clean_soup(["script", "style", "svg", "path", "nav", "footer"]):
+                    script.decompose()
 
-            links = get_links(page)
-            for link in links:
-                full = urljoin(url, link)
+                # Get clean text blocks
+                for elem in clean_soup.find_all(['p', 'h1', 'h2', 'h3']):
+                    text = elem.get_text(strip=True)
+                    if len(text) > 20:
+                        all_blocks.append({'text': text, 'url': start_url, 'selector': 'body'})
+                
+            except Exception as e:
+                log(f"❌ Navigation Error: {e}")
+                
+            await browser.close()
+            
+    except Exception as e:
+        log(f"❌ Playwright Crash: {e}")
 
-                # ---- ignore websocket + local addresses ----
-                if full.startswith("ws://") or full.startswith("wss://"):
-                    continue
-                if "localhost" in full or "127.0.0.1" in full:
-                    continue
-
-                # ---- queue only valid same-domain pages ----
-                if same_domain(root_url, full) and full not in visited and full not in queue:
-                    queue.append(full)
-
-        browser.close()
-
-    return results
+    return all_blocks

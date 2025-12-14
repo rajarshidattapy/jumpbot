@@ -48,4 +48,11 @@ Create a config.py.
 ```bash
 python server/websocket_gateway.py
 ```
-5. Interact with the system via WebSocket at ws://localhost:8765.
+interact with the system via WebSocket at ws://localhost:8765.
+5. Open the file explorer and find the jumpbot folder. and navigate into client folder and opn index.html manually in any off ur browser
+
+6. In the browser, you should see the JumpBot interface.
+7.paste the url of the documentation page you want to crawl and index.
+8. Click the "Crawl and Index" button to start the process.
+9. Once the process is complete, you can query the indexed content using the "Query" input field.
+10.wait for some time things might take some minimal amount of time depending on the size of the documentation page.
