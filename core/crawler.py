@@ -10,7 +10,7 @@ def log(msg):
 
 # --- HARDCODED PATH CHECK ---
 # Based on your screenshot path
-BASE_DIR = r"C:\Users\PRERAN S\OneDrive\Desktop\opensource\jumpbot\client"
+BASE_DIR = r"C:\Users\asus\Desktop\jumpbot\client"
 if not os.path.exists(BASE_DIR):
     # Fallback to relative if hardcoded path fails
     BASE_DIR = os.path.join(os.getcwd(), "client")

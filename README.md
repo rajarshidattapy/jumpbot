@@ -1,10 +1,10 @@
 # JumpBot
 
-JumpBot is a documentation crawler and query tool that leverages modern AI techniques to index and query documentation pages. It provides a WebSocket interface to interact with the system and supports tools for crawling, indexing, and querying documentation.
+JumpBot crawls any website and uses a query tool that leverages modern AI techniques to index and query webpages. It provides a WebSocket interface to interact with the system and supports tools for crawling, indexing, and querying webpages.
 
 ## Features
 
-- **Crawling**: Extracts and processes content from documentation pages.
+- **Crawling**: Extracts and processes content from webpages.
 - **Indexing**: Embeds and stores content for efficient retrieval.
 - **Querying**: Answers questions based on indexed content using an LLM.
 - **WebSocket Gateway**: Provides a bridge for real-time communication with the system.
