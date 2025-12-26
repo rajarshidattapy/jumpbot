@@ -2,6 +2,9 @@
 
 JumpBot crawls any website and uses a query tool that leverages model context protocol (fastmcp) to index and query webpages. It provides a WebSocket interface to interact with the system and supports tools for crawling, indexing, and querying webpages.
 
+## Demo:
+<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/3cb06ef4-a57f-4405-97f3-597c9bbe7c48" />
+
 ## Project Structure
 
 - `agent.py`: Main entry point for the FastMCP agent.
