@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: web-scraper
+    env: docker
+    dockerfilePath: ./tools/Dockerfile
+    dockerContext: ./tools
+    plan: starter
+    envVars:
+      - key: PORT
+        value: 8000
+    healthCheckPath: /docs
+

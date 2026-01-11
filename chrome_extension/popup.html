@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Jumpbot: AI access for any website!</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        min-width: 500px;
+        min-height: 300px;
+        padding: 15px;
+      }
+
+      h2 {
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .options {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      button {
+        padding: 8px 15px;
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #3367d6;
+      }
+
+      #copy-btn {
+        background-color: #34a853;
+      }
+
+      #copy-btn:hover {
+        background-color: #2e8b57;
+      }
+
+      #summary-type {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+      }
+
+      #result {
+        margin-top: 15px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        min-height: 150px;
+        max-height: 400px;
+        overflow-y: auto;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      #result h1 {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+        color: #222;
+      }
+
+      #result h2 {
+        font-size: 1.3em;
+        font-weight: bold;
+        margin-top: 0.8em;
+        margin-bottom: 0.4em;
+        color: #222;
+      }
+
+      #result h3 {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-top: 0.6em;
+        margin-bottom: 0.3em;
+        color: #333;
+      }
+
+      #result p {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+      }
+
+      #result ul, #result ol {
+        padding-left: 25px;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+      }
+
+      #result li {
+        margin-bottom: 0.3em;
+      }
+
+      #result code {
+        background-color: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+
+      #result pre {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+      }
+
+      #result pre code {
+        background-color: transparent;
+        padding: 0;
+      }
+
+      #result strong {
+        font-weight: bold;
+        color: #222;
+      }
+
+      #result em {
+        font-style: italic;
+      }
+
+      #result a {
+        color: #4285f4;
+        text-decoration: none;
+      }
+
+      #result a:hover {
+        text-decoration: underline;
+      }
+
+      .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 150px;
+      }
+
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>    <h2>Jumpbot: AI access for any website!</h2>
+    
+    <div id="page-info" style="margin-bottom: 10px; font-size: 12px; color: #666;">
+      <div id="page-title" style="font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+      <div id="page-url" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+    </div>
+
+    <div class="options">
+      <select id="summary-type">
+        <option value="bullets">Brief Summary</option>
+        <option value="detailed">Detailed Summary</option>
+        <option value="youtube-transcript">YouTube Transcript</option>
+        <option value="docs-handler">Docs Handler</option>
+      </select>
+      <button id="summarize">Summarize This Page</button>
+      <button id="copy-btn">Copy Summary</button>
+      <button id="open-sidepanel-btn" title="Open in side panel" style="background-color: #ea4335; font-size: 12px; padding: 6px 12px;">Side Panel</button>
+    </div>
+
+    <div id="result">
+      Select a summary type and click 'Summarize This Page' to generate a
+      summary.
+    </div>
+
+    <div id="chat-section" style="display: none; margin-top: 20px; border-top: 2px solid #ddd; padding-top: 15px;">
+      <h3 style="margin-bottom: 10px; color: #333;">Chat with Summary/Transcript</h3>
+      <div id="chat-messages" style="height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 10px; margin-bottom: 10px; background-color: #f9f9f9;">
+        <!-- Chat messages will appear here -->
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="chat-input" placeholder="Ask a question about the summary/transcript..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+        <button id="chat-send-btn" style="padding: 8px 15px; background-color: #4285f4; color: white; border: none; border-radius: 4px; cursor: pointer;">Send</button>
+        <button id="chat-clear-btn" style="padding: 8px 15px; background-color: #ea4335; color: white; border: none; border-radius: 4px; cursor: pointer;">Clear</button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
