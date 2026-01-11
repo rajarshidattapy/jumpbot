@@ -9,4 +9,7 @@
 
 
 <br>
+<br>
+<br>
+
 - A Chrome extension that delivers AI-powered summaries, Q&A, and analysis directly inside the browser.
