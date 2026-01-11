@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Scrape website using local API (for detailed summaries)
 async function scrapeWebsite(url) {
   try {
-    const res = await fetch("http://localhost:8000/scrape", {
+    const res = await fetch("https://scraper-78yj.onrender.com/scrape", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
