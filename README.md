@@ -8,4 +8,5 @@
 <img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/b45a0c48-8a1b-4645-a92e-5cd82498d800" />
 
 
+<br>
 - A Chrome extension that delivers AI-powered summaries, Q&A, and analysis directly inside the browser.
