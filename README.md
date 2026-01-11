@@ -23,7 +23,7 @@ An in-browser AI layer that lets users interact with *any webpage* in real time.
 End users want AI *on top of the web*, not behind another app.
 
 🎥 **Demo Video**
-<iframe>https://github.com/user-attachments/assets/3436d817-89c4-4b5b-a416-07c3d6650a79<iframe>
+https://github.com/user-attachments/assets/3436d817-89c4-4b5b-a416-07c3d6650a79
 
 
 ---
